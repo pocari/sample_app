@@ -42,6 +42,8 @@ describe "AuthenticationPages" do
       describe "followd by signout" do
         before { click_link 'Sign out' }
         it { should have_link('Sign in') }
+        it { should_not have_link('Profile', href: user_path(user)) }
+        it { should_not have_link('Settings', href: edit_user_path(user)) }
       end
     end
   end
@@ -92,6 +94,20 @@ describe "AuthenticationPages" do
             expect(page).to have_title('Edit user')
           end
         end
+
+        describe "when singing in again" do
+          before do
+            delete signout_path
+            visit signin_path
+            fill_in "Email", with: user.email
+            fill_in "Password", with: user.password
+            click_button "Sign in"
+          end
+
+          it "should render the default (profile) page" do
+            expect(page).to have_title(user.name)
+          end
+        end
       end
     end
 
@@ -108,6 +124,20 @@ describe "AuthenticationPages" do
 
       describe "submitting a PATCH request to the Users#update action" do
         before { patch user_path(wrong_user) }
+        specify { expect(response).to redirect_to(root_path) }
+      end
+    end
+    describe "as collect user" do
+      let(:user) { FactoryGirl.create(:user) }
+      before {valid_signin user, no_capybara: true}
+
+      describe "submitting a GET request to the Users#new action" do
+        before { get new_user_path(user) }
+        specify { expect(response).to redirect_to(root_path) }
+      end
+
+      describe "submitting a POST request to the Users#create action" do
+        before { post users_path(user) }
         specify { expect(response).to redirect_to(root_path) }
       end
     end

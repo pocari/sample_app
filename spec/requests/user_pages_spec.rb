@@ -28,6 +28,24 @@ describe 'User Pages' do
       end
     end
 
+    describe "as an admin user" do
+      let(:admin) { FactoryGirl.create(:admin) }
+      before do
+        valid_signin admin, no_capybara: true
+      end
+      describe "when submitting DELETE request to myself" do
+        it "should not change User count" do
+          expect {
+            delete user_path(admin)
+          }.not_to change(User, :count)
+        end
+
+        specify {
+          delete user_path(admin)
+          expect(response).to redirect_to(root_path)
+        }
+      end
+    end
     describe "delete links" do
       it { should_not have_link('delete') }
 
@@ -146,6 +164,23 @@ describe 'User Pages' do
         specify { expect(user.reload.name).to eq new_name }
         specify { expect(user.reload.email).to eq new_email }
       end
+    end
+
+    describe "forbidden attributes" do
+      let(:params) do
+        {
+          user: {
+            admin: true,
+            password: user.password,
+            password_confirmation: user.password
+          }
+        }
+      end
+      before do
+        valid_signin user, no_capybara: true
+        patch user_path(user), params
+      end
+      specify { expect(user.reload).not_to be_admin }
     end
   end
 end

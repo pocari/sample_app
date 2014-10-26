@@ -16,7 +16,11 @@
       <% end %>
       <%= yield %>
       <%= render 'layouts/footer' %> 
-      <%= debug(params) if Rails.env.development? %>
+
+      <% if Rails.env.development? %>
+        <%= debug(params) %>
+        <%= debug([:ip, :media_type, :server_software].each_with_object({}){ |e, acc| acc[e] = request.send(e) }) %>
+      <% end %>
     </div>
   </body>
 </html>
