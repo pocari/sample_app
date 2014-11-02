@@ -19,6 +19,46 @@ describe 'StaticPages' do
     it_should_behave_like "all static pages"
     it { should_not have_title('| Home') }
 
+    describe "microposts" do
+      let(:user) { FactoryGirl.create(:user) }
+      context "user have many microposts" do 
+        before do
+          40.times { FactoryGirl.create(:micropost, user: user, content: "hoge") }
+          valid_signin user
+          visit root_path
+        end
+
+        it "should render each microposts" do
+          user.microposts.paginate(page: 1).each do |mp|
+            expect(page).to have_selector('li', text: mp.content)
+          end
+        end
+
+        it { should have_content("40 microposts") }
+      end
+
+      context "user have a micropost" do 
+        let!(:m1) { FactoryGirl.create(:micropost, user: user, content: "foo") }
+
+        before do 
+          valid_signin user
+          visit root_path
+        end
+
+        it { should_not have_content("1 microposts") }
+        it { should have_content("1 micropost") }
+      end
+
+      context "user have no micropost" do 
+        before do 
+          valid_signin user
+          visit root_path
+        end
+
+        it { should have_content("0 microposts") }
+      end
+    end
+
     describe "for signed-in users" do
       let(:user) { FactoryGirl.create(:user) }
       before do

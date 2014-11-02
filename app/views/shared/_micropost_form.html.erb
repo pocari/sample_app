@@ -3,7 +3,8 @@
   <div class="field">
     <%= f.text_area :content, placeholder: "Compose new micropost... " %>
   </div>
-
+  <span id="feed_char_counter">0/140</span>
+  <span id="feed_size_over" class="alert">feed size over!</span>
   <%= f.submit "Post", class: "btn btn-large btn-primary" %>
 <% end %>
 

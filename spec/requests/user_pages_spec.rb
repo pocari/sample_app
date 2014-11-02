@@ -85,7 +85,22 @@ describe 'User Pages' do
     describe "microposts" do
       it { should have_content(m1.content) }
       it { should have_content(m2.content) }
-      it { should have_content(user.microposts.count) }
+      it { should have_content(user.microposts.count.to_s) }
+      it { should_not have_link('delete', href: micropost_path(m1)) }
+    end
+
+    describe "there is delete link if current_user page" do
+      before do
+        valid_signin user
+        visit user_path(user)
+      end
+
+      describe "microposts" do
+        it { should have_content(m1.content) }
+        it { should have_content(m2.content) }
+        it { should have_content(user.microposts.count.to_s) }
+        it { should have_link('delete', href: micropost_path(m1)) }
+      end
     end
   end
 
