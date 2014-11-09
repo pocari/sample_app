@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe User do
-
   before {
     @user = User.new(
       name: "Example User",
@@ -209,6 +208,23 @@ describe User do
 
       it { should_not be_following(other_user) }
       its(:followed_users) { should_not include(other_user) }
+    end
+
+    describe "relationship associations" do
+      context "following user deleted" do
+        it "user's relationships count decremented" do
+          expect {
+            other_user.destroy!
+          }.to change(@user.relationships, :count).by(-1)
+        end
+      end
+      context "followed user deleted" do
+        it "other user's relationships count decremented" do
+          expect {
+            @user.destroy!
+          }.to change(other_user.reverse_relationships, :count).by(-1)
+        end
+      end
     end
   end
 end
