@@ -103,6 +103,32 @@ describe 'User Pages' do
       end
     end
 
+    describe "follower/following counts" do
+      let(:other_user) { FactoryGirl.create(:user) }
+      before do
+        valid_signin user
+        visit user_path(user)
+      end
+
+      it { should have_link("0 following", href: following_user_path(user)) }
+      context "add following user" do
+        before do
+          user.follow!(other_user)
+          visit user_path(user)
+        end
+        it { should have_link("1 following", href: following_user_path(user)) }
+      end
+
+      it { should have_link("0 followers", href: followers_user_path(user)) }
+      context "add follower" do
+        before do
+          other_user.follow!(user)
+          visit user_path(user)
+        end
+        it { should have_link("1 followers", href: followers_user_path(user)) }
+      end
+    end
+
     describe "follow/unfollow buttons" do
       let(:other_user) { FactoryGirl.create(:user) }
       before { valid_signin user}
