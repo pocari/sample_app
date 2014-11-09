@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.0.0'
+ruby '2.1.3'
 #ruby-gemset=railstutorial_rails_4_0
 
 gem 'rails', '4.0.5'
@@ -13,6 +13,8 @@ group :development, :test do
   gem 'sqlite3', '1.3.8'
   gem 'rspec-rails', '2.13.1'
   gem 'pry-rails', '0.3.2'
+  gem 'pry-byebug', '2.0.0'
+  gem 'pry-stack_explorer', '0.4.9.1'
   gem 'factory_girl_rails', '4.2.1'
 end
 
